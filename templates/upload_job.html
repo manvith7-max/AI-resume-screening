@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Post Job Description - AI Resume Screening System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="glass-card p-4 p-md-5">
+            <div class="d-flex align-items-center gap-3 mb-4 border-bottom border-secondary border-opacity-10 pb-3">
+                <div class="stat-icon" style="width: 54px; height: 54px;">
+                    <i class="fas fa-file-signature fs-4"></i>
+                </div>
+                <div>
+                    <h3 class="fw-bold text-light mb-0">Create Job Description</h3>
+                    <p class="text-secondary small mb-0">Define the job title, domain category, description text, and target skills.</p>
+                </div>
+            </div>
+
+            <form method="POST" action="{{ url_for('upload_job') }}">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-7">
+                        <label for="title" class="form-label text-secondary small fw-bold">Job Title</label>
+                        <input type="text" class="form-control form-control-glass" id="title" name="title" placeholder="e.g. Senior Data Scientist" required>
+                    </div>
+
+                    <div class="col-md-5">
+                        <label for="category" class="form-label text-secondary small fw-bold">Target Job Domain / Category</label>
+                        <select class="form-select form-select-glass" id="category" name="category" required>
+                            <option value="" disabled selected>Select Job Role Domain...</option>
+                            {% for cat in categories %}
+                            <option value="{{ cat }}">{{ cat }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="required_skills" class="form-label text-secondary small fw-bold">
+                        Required Skills <span class="text-secondary opacity-75 fw-normal">(Comma separated)</span>
+                    </label>
+                    <input type="text" class="form-control form-control-glass" id="required_skills" name="required_skills" placeholder="e.g. Python, Machine Learning, SQL, TensorFlow, Pandas" required>
+                </div>
+
+                <div class="mb-4">
+                    <label for="description_text" class="form-label text-secondary small fw-bold">Full Job Description & Requirements</label>
+                    <textarea class="form-control form-control-glass" id="description_text" name="description_text" rows="8" placeholder="Paste or type full job responsibilities, educational requirements, and technical prerequisites..." required></textarea>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center pt-2">
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-glass">
+                        <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+                    </a>
+                    <button type="submit" class="btn btn-primary-gradient px-4">
+                        <i class="fas fa-save me-2"></i> Save Job & Proceed to Screening
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

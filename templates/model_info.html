@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}ML Models & Performance - AI Resume Screening System{% endblock %}
+
+{% block content %}
+<div class="glass-card mb-4 p-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div>
+            <span class="badge bg-indigo text-light mb-1">Scikit-Learn NLP Pipeline</span>
+            <h3 class="fw-bold text-light mb-1">
+                <i class="fas fa-microchip text-info me-2"></i> Machine Learning Classifier Metrics
+            </h3>
+            <p class="text-secondary small mb-0">
+                Evaluation results benchmarking 4 text classification algorithms across {{ metrics.categories_count }} job domains.
+            </p>
+        </div>
+        <div class="glass-card px-3 py-2 text-center">
+            <small class="text-secondary d-block">Best Model Selected</small>
+            <span class="fw-bold text-success fs-5"><i class="fas fa-check-circle me-1"></i> {{ metrics.best_model }}</span>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Comparison Table Card -->
+    <div class="col-lg-6">
+        <div class="glass-card h-100">
+            <div class="glass-card-header">
+                <h5 class="fw-bold text-light mb-0">
+                    <i class="fas fa-table text-indigo me-2"></i> Performance Benchmarks
+                </h5>
+            </div>
+            <div class="p-3">
+                <div class="table-responsive">
+                    <table class="table table-glass align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Algorithm</th>
+                                <th class="text-center">Accuracy</th>
+                                <th class="text-center">Precision</th>
+                                <th class="text-center">Recall</th>
+                                <th class="text-center">F1-Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for model_name, score in metrics.models.items() %}
+                            <tr {% if model_name == metrics.best_model %}class="table-active" style="background: rgba(99, 102, 241, 0.15);"{% endif %}>
+                                <td>
+                                    <strong class="text-light">{{ model_name }}</strong>
+                                    {% if model_name == metrics.best_model %}
+                                        <span class="badge bg-success ms-1 small">BEST</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center text-light fw-bold">{{ "%.1f"|format(score.accuracy * 100) }}%</td>
+                                <td class="text-center text-secondary">{{ "%.1f"|format(score.precision * 100) }}%</td>
+                                <td class="text-center text-secondary">{{ "%.1f"|format(score.recall * 100) }}%</td>
+                                <td class="text-center">
+                                    <span class="badge bg-indigo text-light">{{ "%.1f"|format(score.f1_score * 100) }}%</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-4 p-3 glass-card">
+                    <h6 class="fw-bold text-light mb-2"><i class="fas fa-info-circle text-info me-1"></i> Technical Highlights</h6>
+                    <ul class="text-secondary small mb-0 ps-3">
+                        <li class="mb-1"><strong>Feature Extraction:</strong> TF-IDF Vectorization with Unigrams & Bigrams (max 3,500 features).</li>
+                        <li class="mb-1"><strong>NLP Cleaning:</strong> NLTK Lemmatizer, Stopword filtering, and Regex normalization.</li>
+                        <li class="mb-1"><strong>Dataset Size:</strong> 600 resumes balanced across 25 distinct corporate and technical categories.</li>
+                        <li><strong>Scoring Weight:</strong> Multi-class probability contributes 20% to final overall candidate score.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Image Card -->
+    <div class="col-lg-6">
+        <div class="glass-card h-100">
+            <div class="glass-card-header">
+                <h5 class="fw-bold text-light mb-0">
+                    <i class="fas fa-chart-bar text-info me-2"></i> Accuracy & F1 Comparison Plot
+                </h5>
+            </div>
+            <div class="p-3 text-center">
+                {% if chart_exists %}
+                <img src="{{ url_for('model_comparison_chart') }}" alt="Model Comparison Plot" class="img-fluid rounded border border-secondary border-opacity-20 shadow-sm" style="max-height: 400px;">
+                {% else %}
+                <div class="py-5 text-secondary">
+                    <i class="fas fa-image fs-1 mb-2"></i>
+                    <p>Comparison chart not generated yet. Train models to render plot.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

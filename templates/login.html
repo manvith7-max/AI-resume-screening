@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign In - AI Resume Screening System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center min-vh-75">
+    <div class="col-md-5 col-lg-4">
+        <div class="glass-card p-4 p-md-5">
+            <div class="text-center mb-4">
+                <div class="stat-icon mx-auto mb-3" style="width: 64px; height: 64px;">
+                    <i class="fas fa-lock fs-3"></i>
+                </div>
+                <h3 class="fw-bold text-light mb-1">Welcome Back</h3>
+                <p class="text-secondary small">Sign in to access your screening dashboard</p>
+            </div>
+
+            <form method="POST" action="{{ url_for('login') }}">
+                <div class="mb-3">
+                    <label for="username" class="form-label text-secondary small font-weight-bold">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text glass-card border-end-0 text-secondary"><i class="fas fa-user"></i></span>
+                        <input type="text" class="form-control form-control-glass border-start-0" id="username" name="username" placeholder="Enter username" required>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="password" class="form-label text-secondary small font-weight-bold">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text glass-card border-end-0 text-secondary"><i class="fas fa-key"></i></span>
+                        <input type="password" class="form-control form-control-glass border-start-0" id="password" name="password" placeholder="Enter password" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary-gradient w-100 py-2 mb-3">
+                    <i class="fas fa-sign-in-alt me-2"></i> Sign In
+                </button>
+            </form>
+
+            <div class="text-center text-secondary small mt-3">
+                Don't have an account? <a href="{{ url_for('register') }}" class="text-info text-decoration-none fw-bold">Register here</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

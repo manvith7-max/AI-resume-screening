@@ -1,0 +1,2 @@
+Rank,Name,Email,Phone,Matching Score (%),Cosine Sim (%),Skill Score (%),ML Prob (%),Missing Skills,Status
+1,Alex Mercer,alex@example.com,+1 555-111-2222,85.0,82.0,90.0,88.0,Kubernetes,Highly Recommended

@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block title %}Candidate Evaluation Results - AI Resume Screening System{% endblock %}
+
+{% block content %}
+<div class="glass-card mb-4 p-4">
+    <div class="row align-items-center g-3">
+        <div class="col-md-7">
+            <span class="badge bg-indigo text-light mb-1">{{ job.category }}</span>
+            <h3 class="fw-bold text-light mb-1">
+                <i class="fas fa-poll text-info me-2"></i> {{ job.title }} - Candidate Ranking
+            </h3>
+            <p class="text-secondary small mb-0">
+                Found <strong>{{ results|length }}</strong> candidates evaluated against this job description.
+            </p>
+        </div>
+        <div class="col-md-5 text-md-end d-flex gap-2 justify-content-md-end flex-wrap">
+            <a href="{{ url_for('download_report', job_id=job.id, fmt='pdf') }}" class="btn btn-outline-glass btn-sm">
+                <i class="fas fa-file-pdf text-danger me-1"></i> PDF Export
+            </a>
+            <a href="{{ url_for('download_report', job_id=job.id, fmt='excel') }}" class="btn btn-outline-glass btn-sm">
+                <i class="fas fa-file-excel text-success me-1"></i> Excel Export
+            </a>
+            <a href="{{ url_for('download_report', job_id=job.id, fmt='csv') }}" class="btn btn-outline-glass btn-sm">
+                <i class="fas fa-file-csv text-info me-1"></i> CSV Export
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="glass-card mb-4 p-3">
+    <div class="row g-3 align-items-center">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text glass-card border-end-0 text-secondary"><i class="fas fa-search"></i></span>
+                <input type="text" id="searchCandidate" class="form-control form-control-glass border-start-0" placeholder="Search candidate name or email...">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="d-flex align-items-center gap-2">
+                <label for="filterStatus" class="text-secondary small text-nowrap fw-bold">Filter Status:</label>
+                <select id="filterStatus" class="form-select form-select-glass">
+                    <option value="ALL">All Recommendation Levels</option>
+                    <option value="Highly Recommended">Highly Recommended (≥ 80%)</option>
+                    <option value="Recommended">Recommended (60% - 79%)</option>
+                    <option value="Not Recommended">Not Recommended (< 60%)</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-2 text-end">
+            <a href="{{ url_for('upload_resumes', job_id=job.id) }}" class="btn btn-primary-gradient btn-sm w-100">
+                <i class="fas fa-plus me-1"></i> Add More
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="glass-card overflow-hidden">
+    {% if results %}
+    <div class="table-responsive">
+        <table class="table table-glass align-middle mb-0">
+            <thead>
+                <tr>
+                    <th style="width: 60px;" class="text-center">Rank</th>
+                    <th>Candidate Name</th>
+                    <th>Contact Info</th>
+                    <th>Overall Match Score</th>
+                    <th>Cosine Sim</th>
+                    <th>Skill Match</th>
+                    <th>ML Category Score</th>
+                    <th>Recommendation</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for res in results %}
+                <tr class="candidate-row" 
+                    data-name="{{ res.parsed_name|lower }}" 
+                    data-email="{{ res.parsed_email|lower }}" 
+                    data-status="{{ res.status }}">
+                    <td class="text-center fw-bold text-light">
+                        {% if loop.index == 1 %}
+                            <i class="fas fa-crown text-warning me-1"></i> 1
+                        {% else %}
+                            #{{ loop.index }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('candidate_detail', result_id=res.result_id) }}" class="fw-bold text-light text-decoration-none">
+                            {{ res.parsed_name }}
+                        </a>
+                        <br>
+                        <small class="text-secondary">{{ res.filename }}</small>
+                    </td>
+                    <td>
+                        <small class="text-light"><i class="fas fa-envelope me-1 text-secondary"></i> {{ res.parsed_email }}</small><br>
+                        <small class="text-secondary"><i class="fas fa-phone me-1 text-secondary"></i> {{ res.parsed_phone }}</small>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="fw-bold text-light fs-5">{{ "%.1f"|format(res.matching_score) }}%</span>
+                            <div class="progress flex-grow-1" style="height: 6px; background: rgba(255,255,255,0.1);">
+                                <div class="progress-bar {% if res.matching_score >= 80 %}bg-success{% elif res.matching_score >= 60 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                     style="width: {{ res.matching_score }}%;"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge bg-secondary opacity-75">{{ "%.1f"|format(res.cosine_similarity * 100) }}%</span></td>
+                    <td><span class="badge bg-secondary opacity-75">{{ "%.1f"|format(res.skill_match_score) }}%</span></td>
+                    <td><span class="badge bg-secondary opacity-75">{{ "%.1f"|format(res.ml_probability * 100) }}%</span></td>
+                    <td>
+                        {% if "Highly" in res.status %}
+                            <span class="badge-status badge-highly-recommended"><i class="fas fa-star me-1"></i> Highly Recommended</span>
+                        {% elif "Recommended" in res.status %}
+                            <span class="badge-status badge-recommended"><i class="fas fa-thumbs-up me-1"></i> Recommended</span>
+                        {% else %}
+                            <span class="badge-status badge-not-recommended"><i class="fas fa-times-circle me-1"></i> Not Recommended</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <a href="{{ url_for('candidate_detail', result_id=res.result_id) }}" class="btn btn-outline-glass btn-sm">
+                            <i class="fas fa-eye me-1"></i> Details
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-user-slash fs-1 text-secondary mb-3"></i>
+        <h5 class="text-light">No Candidate Results Available</h5>
+        <p class="text-secondary small">Upload resumes for this job description to see matching analytics.</p>
+        <a href="{{ url_for('upload_resumes', job_id=job.id) }}" class="btn btn-primary-gradient btn-sm mt-2">
+            <i class="fas fa-upload me-1"></i> Upload Resumes Now
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
