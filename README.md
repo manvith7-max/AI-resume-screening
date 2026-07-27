@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # AI Resume Screening & Candidate Ranking System
 
 An end-to-end AI-powered recruitment platform designed to parse candidate resumes (PDF, DOCX), compute multi-dimensional matching scores using NLP & Machine Learning, identify skill gaps, and rank applicants for technical and corporate job roles.
@@ -104,3 +105,6 @@ $$\text{Final Candidate Score (\%)} = (0.40 \times \text{Cosine Sim}) + (0.40 \t
 * 🟢 **Highly Recommended**: Score $\ge 80\%$
 * 🟡 **Recommended**: $60\% \le \text{Score} < 80\%$
 * 🔴 **Not Recommended**: Score $< 60\%$
+=======
+# AI-resume-screening
+>>>>>>> 7b683ed15349e9359a8cc176080201cc062360dc
