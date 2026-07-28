@@ -1,11 +1,10 @@
-<<<<<<< HEAD
 # AI Resume Screening & Candidate Ranking System
 
 An end-to-end AI-powered recruitment platform designed to parse candidate resumes (PDF, DOCX), compute multi-dimensional matching scores using NLP & Machine Learning, identify skill gaps, and rank applicants for technical and corporate job roles.
 
-![Python](https://img.shields.io/badge/Python-3.14-blue)
+![Python](https://img.shields.io/badge/Python-3.10+-blue)
 ![Flask](https://img.shields.io/badge/Flask-3.1-black)
-![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.9-orange)
+![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.4-orange)
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-purple)
 
 ---
@@ -29,6 +28,7 @@ An end-to-end AI-powered recruitment platform designed to parse candidate resume
 ai-resume-screening/
 ├── app.py                      # Main Flask Web Application
 ├── requirements.txt            # Package Dependencies
+├── Procfile                    # Web Server Process File (gunicorn app:app)
 ├── README.md                   # System Documentation
 │
 ├── database/
@@ -50,10 +50,10 @@ ai-resume-screening/
 │   └── model_metrics.json      # Saved Performance Metrics
 │
 ├── utils/
-│   ├── nlp_pipeline.py         # NLTK/spaCy Text Cleaning & Lemmatization
+│   ├── nlp_pipeline.py         # NLTK Text Cleaning & Lemmatization
 │   ├── resume_parser.py        # PDF/DOCX Parsing & Entity Extraction
 │   ├── report_generator.py     # PDF, Excel, and CSV Exporters
-│   └── visualizations.py       # Plotly & Matplotlib Data Preprocessors
+│   └── visualizations.py       # Plotly Data Preprocessors
 │
 ├── templates/                  # Jinja2 HTML Templates
 ├── static/                     # CSS & JS Assets
@@ -105,6 +105,3 @@ $$\text{Final Candidate Score (\%)} = (0.40 \times \text{Cosine Sim}) + (0.40 \t
 * 🟢 **Highly Recommended**: Score $\ge 80\%$
 * 🟡 **Recommended**: $60\% \le \text{Score} < 80\%$
 * 🔴 **Not Recommended**: Score $< 60\%$
-=======
-# AI-resume-screening
->>>>>>> 7b683ed15349e9359a8cc176080201cc062360dc
