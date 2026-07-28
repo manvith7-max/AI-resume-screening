@@ -7,7 +7,6 @@ import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -16,7 +15,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import LinearSVC
 from sklearn.calibration import CalibratedClassifierCV
 from sklearn.naive_bayes import MultinomialNB
-from sklearn.metrics import accuracy_score, precision_recall_fscore_support, classification_report
+from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 
 # Add parent directory to sys.path for importing utils
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -126,19 +125,20 @@ def generate_plots(metrics_summary, save_path):
     x = np.arange(len(names))
     width = 0.35
     
-    plt.figure(figsize=(10, 6))
-    sns.set_theme(style="whitegrid")
-    
     fig, ax = plt.subplots(figsize=(10, 5.5))
+    ax.set_facecolor('#f8fafc')
+    fig.patch.set_facecolor('#ffffff')
+    
     rects1 = ax.bar(x - width/2, accuracies, width, label='Accuracy (%)', color='#4f46e5')
     rects2 = ax.bar(x + width/2, f1_scores, width, label='F1-Score (%)', color='#06b6d4')
     
-    ax.set_ylabel('Percentage (%)', fontsize=12)
-    ax.set_title('Machine Learning Models Comparison', fontsize=14, fontweight='bold', pad=15)
+    ax.set_ylabel('Percentage (%)', fontsize=12, fontweight='bold', color='#1e293b')
+    ax.set_title('Machine Learning Models Comparison', fontsize=14, fontweight='bold', pad=15, color='#0f172a')
     ax.set_xticks(x)
-    ax.set_xticklabels(names, fontsize=11)
-    ax.legend(fontsize=11)
+    ax.set_xticklabels(names, fontsize=11, fontweight='bold', color='#334155')
+    ax.legend(fontsize=11, frameon=True, facecolor='#ffffff')
     ax.set_ylim(0, 105)
+    ax.grid(axis='y', linestyle='--', alpha=0.5)
     
     def autolabel(rects):
         for rect in rects:
@@ -147,7 +147,7 @@ def generate_plots(metrics_summary, save_path):
                         xy=(rect.get_x() + rect.get_width() / 2, height),
                         xytext=(0, 3),
                         textcoords="offset points",
-                        ha='center', va='bottom', fontsize=9, fontweight='bold')
+                        ha='center', va='bottom', fontsize=9, fontweight='bold', color='#1e293b')
 
     autolabel(rects1)
     autolabel(rects2)

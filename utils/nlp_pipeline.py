@@ -1,10 +1,7 @@
 import re
 import nltk
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
-from nltk.stem import WordNetLemmatizer
 
-# Ensure required NLTK resources are downloaded silently
+# Safe NLTK Resource Initialization
 NLTK_RESOURCES = ["punkt", "punkt_tab", "stopwords", "wordnet", "omw-1.4"]
 for resource in NLTK_RESOURCES:
     try:
@@ -18,12 +15,21 @@ for resource in NLTK_RESOURCES:
             except Exception:
                 pass
 
-lemmatizer = WordNetLemmatizer()
+try:
+    from nltk.stem import WordNetLemmatizer
+    lemmatizer = WordNetLemmatizer()
+except Exception:
+    lemmatizer = None
 
 try:
+    from nltk.corpus import stopwords
     STOP_WORDS = set(stopwords.words("english"))
 except Exception:
-    STOP_WORDS = {"a", "an", "the", "and", "or", "in", "on", "at", "to", "for", "with", "by", "of", "is", "it", "this", "that"}
+    STOP_WORDS = {
+        "a", "an", "the", "and", "or", "in", "on", "at", "to", "for", "with", "by", "of", "is", "it", 
+        "this", "that", "be", "are", "was", "were", "from", "as", "about", "into", "through", "during", 
+        "before", "after", "above", "below", "up", "down", "out", "off", "over", "under", "again", "further"
+    }
 
 def clean_text(text):
     """
@@ -55,20 +61,31 @@ def preprocess_text(text):
     Returns a cleaned token string suitable for TF-IDF vectorization.
     """
     cleaned = clean_text(text)
+    if not cleaned:
+        return ""
     
     try:
+        from nltk.tokenize import word_tokenize
         tokens = word_tokenize(cleaned)
     except Exception:
-        tokens = cleaned.split()
+        # Regex fallback tokenization if NLTK punkt is unavailable
+        tokens = re.findall(r'\b[a-zA-Z0-9+#\.]+\b', cleaned)
         
     filtered_tokens = []
     for token in tokens:
         token = token.strip('.').strip()
         if token and token not in STOP_WORDS and len(token) > 1:
-            lemmatized = lemmatizer.lemmatize(token)
+            if lemmatizer:
+                try:
+                    lemmatized = lemmatizer.lemmatize(token)
+                except Exception:
+                    lemmatized = token
+            else:
+                lemmatized = token
             filtered_tokens.append(lemmatized)
             
-    return " ".join(filtered_tokens)
+    res = " ".join(filtered_tokens)
+    return res if res else cleaned
 
 def extract_keywords(text, top_n=20):
     """

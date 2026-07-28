@@ -1,0 +1,27 @@
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv/
+
+# Byte-compiled / Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# SQLite Database
+database/*.db
+!database/schema.sql
+
+# User Uploads & Generated Reports (preserve directories via gitkeep)
+uploads/*
+!uploads/.gitkeep
+reports/*
+!reports/.gitkeep
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

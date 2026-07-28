@@ -36,7 +36,7 @@ SKILL_DICTIONARY = [
 
 def extract_text_from_pdf(filepath):
     """
-    Extracts text from a PDF file using PyMuPDF (fitz) or pdfplumber fallback.
+    Extracts text from a PDF file using PyMuPDF (fitz).
     """
     text = ""
     try:
@@ -47,19 +47,8 @@ def extract_text_from_pdf(filepath):
         doc.close()
         if text.strip():
             return text
-    except Exception:
-        pass
-
-    try:
-        import pdfplumber
-        with pdfplumber.open(filepath) as pdf:
-            for page in pdf.pages:
-                page_text = page.extract_text()
-                if page_text:
-                    text += page_text + "\n"
-        if text.strip():
-            return text
-    except Exception:
+    except Exception as e:
+        print(f"Error reading PDF {filepath}: {e}")
         pass
 
     return text
@@ -225,7 +214,6 @@ def parse_resume(filepath):
     """
     raw_text = extract_text_from_file(filepath)
     if not raw_text.strip():
-        # Fallback if text extraction fails
         raw_text = f"Sample text for file {os.path.basename(filepath)}"
         
     name = parse_name(raw_text)

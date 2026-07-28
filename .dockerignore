@@ -1,0 +1,12 @@
+venv/
+.venv/
+tests/
+*.pyc
+__pycache__/
+.git/
+.vscode/
+database/database.db
+uploads/*
+!uploads/.gitkeep
+reports/*
+!reports/.gitkeep

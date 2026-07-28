@@ -1,5 +1,6 @@
 import os
 import json
+import uuid
 import numpy as np
 import joblib
 from functools import wraps
@@ -30,7 +31,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(REPORTS_FOLDER, exist_ok=True)
 
 app = Flask(__name__)
-app.secret_key = "ai_resume_screening_super_secret_key_2026"
+app.secret_key = os.environ.get("SECRET_KEY", "ai_resume_screening_super_secret_key_2026")
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024  # 32MB Max Upload Limit
 
@@ -203,7 +204,9 @@ def upload_resumes(job_id):
             filename = secure_filename(file.filename)
             if not filename:
                 continue
-            filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+                
+            unique_filename = f"{uuid.uuid4().hex[:8]}_{filename}"
+            filepath = os.path.join(app.config["UPLOAD_FOLDER"], unique_filename)
             file.save(filepath)
             
             # Parse resume contents
@@ -213,16 +216,22 @@ def upload_resumes(job_id):
             
             # 1. Cosine Similarity (40% Weight)
             resume_processed = preprocess_text(raw_text)
-            if TFIDF_VECTORIZER:
+            
+            if not job_processed.strip() or not resume_processed.strip():
+                cosine_sim = 0.5
+            elif TFIDF_VECTORIZER:
                 try:
                     vectors = TFIDF_VECTORIZER.transform([job_processed, resume_processed])
                     cosine_sim = float(cosine_similarity(vectors[0], vectors[1])[0][0])
                 except Exception:
                     cosine_sim = 0.5
             else:
-                from sklearn.feature_extraction.text import TfidfVectorizer
-                temp_vec = TfidfVectorizer().fit_transform([job_processed, resume_processed])
-                cosine_sim = float(cosine_similarity(temp_vec[0], temp_vec[1])[0][0])
+                try:
+                    from sklearn.feature_extraction.text import TfidfVectorizer
+                    temp_vec = TfidfVectorizer().fit_transform([job_processed, resume_processed])
+                    cosine_sim = float(cosine_similarity(temp_vec[0], temp_vec[1])[0][0])
+                except Exception:
+                    cosine_sim = 0.5
                 
             # 2. Skill Match Score (40% Weight)
             candidate_skills = [s.lower() for s in parsed_data.get("skills", [])]
@@ -238,7 +247,7 @@ def upload_resumes(job_id):
             ml_prob = 0.5
             suitability_pred = job["category"]
             
-            if BEST_MODEL and TFIDF_VECTORIZER:
+            if BEST_MODEL and TFIDF_VECTORIZER and resume_processed.strip():
                 try:
                     feat = TFIDF_VECTORIZER.transform([resume_processed])
                     pred_cat = BEST_MODEL.predict(feat)[0]
@@ -374,4 +383,6 @@ def model_comparison_chart():
     return "Chart not generated", 404
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    debug_mode = os.environ.get("FLASK_ENV") == "development"
+    app.run(host="0.0.0.0", port=port, debug=debug_mode)
