@@ -6,6 +6,9 @@ An end-to-end AI-powered recruitment platform designed to parse candidate resume
 ![Flask](https://img.shields.io/badge/Flask-3.1-black)
 ![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.4-orange)
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-purple)
+# AI Resume Screening
+
+🚀 **Live Demo:** https://ai-resume-screening-lyart.vercel.app/
 
 ---
 
